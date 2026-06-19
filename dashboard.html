@@ -164,15 +164,24 @@ body{
 
 .filter-grid{
   display:grid;
-  grid-template-columns:1fr 1fr 1fr;
+  grid-template-columns:1fr 1fr 300px;
   gap:12px;
-  align-items:end;
+  align-items:start;
 }
 
 .filter-actions{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:12px;
+  padding-top:31px;
+}
+
+.filter-actions .menu-btn{
+  height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
 }
 
 label{
@@ -342,13 +351,16 @@ tbody tr:nth-child(even){
 @media(max-width:768px){
   .wrap{
     width:100%;
-    padding:14px;
+    padding:14px;  
+}
   
+  .filter-grid{
+    grid-template-columns:1fr;
   }
-  
+
   .filter-actions{
     grid-template-columns:1fr;
-
+    padding-top:0;
   }
 
   .top-menu{
