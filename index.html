@@ -1,16 +1,569 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>แบบประเมินอาหารเวรบ่าย</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบประเมินอาหารเวรบ่าย</title>
 
-  <script>
-    window.location.replace("https://script.google.com/macros/s/AKfycbzSqxohCCUGmqrCx0B-nS_17MrYvECN9uC9CCJ7vHJgESCJg-Uysp-gCsAg35A317x9aw/exec");
-  </script>
+<style>
+:root{
+  --bg:#FFFFFF;
+  --primary:#800000;
+  --primary-dark:#660000;
+  --secondary:#F5F5F5;
+  --text:#222222;
+  --border:#DDDDDD;
+  --white:#FFFFFF;
+}
+
+*{box-sizing:border-box;font-family:"Sarabun","Prompt",Arial,sans-serif}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.page{
+  width:min(96%, 980px);
+  margin:24px auto;
+  background:var(--white);
+  padding:clamp(16px,3vw,30px);
+  border-radius:18px;
+  border:1px solid var(--border);
+  box-shadow:0 4px 18px rgba(0,0,0,.06);
+}
+
+.top-menu{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+
+.menu-btn{
+  padding:10px 18px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:700;
+  transition:.2s;
+  font-size:15px;
+}
+
+.home-btn{
+  background:#F5F5F5;
+  color:#222222;
+  border:1px solid #DDDDDD;
+}
+
+.dashboard-btn{
+  background:#800000;
+  color:#FFFFFF;
+  box-shadow:0 4px 12px rgba(128,0,0,.20);
+}
+
+.dashboard-btn:hover{
+  background:#660000;
+}
+
+h1{
+  text-align:center;
+  font-size:clamp(21px,3vw,26px);
+  margin:0 0 12px;
+  color:var(--primary);
+  line-height:1.5;
+}
+
+.desc{
+  background:var(--secondary);
+  border-left:6px solid var(--primary);
+  padding:14px 18px;
+  border-radius:12px;
+  line-height:1.8;
+  margin-bottom:18px;
+  font-size:clamp(14px,2vw,16px);
+}
+
+.section{
+  margin-top:22px;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:clamp(14px,2.5vw,22px);
+}
+
+.section h2{
+  font-size:clamp(17px,2.5vw,20px);
+  margin:0 0 16px;
+  color:var(--primary);
+  border-bottom:2px solid var(--primary);
+  padding-bottom:8px;
+}
+
+label{
+  font-weight:600;
+  color:var(--text);
+}
+
+select,
+input[type="text"],
+textarea{
+  width:100%;
+  padding:12px 13px;
+  border:1px solid #CCCCCC;
+  border-radius:10px;
+  font-size:16px;
+  margin-top:6px;
+  color:var(--text);
+  background:var(--white);
+  outline:none;
+}
+
+select:focus,
+input[type="text"]:focus,
+textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(128,0,0,.12);
+}
+
+textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+.field{
+  margin-bottom:16px;
+}
+
+.options{
+  background:var(--secondary);
+  padding:12px 14px;
+  border-radius:12px;
+  margin-top:8px;
+}
+
+.options label{
+  display:block;
+  margin:10px 0;
+  font-weight:400;
+  line-height:1.5;
+}
+
+input[type="radio"]{
+  accent-color:var(--primary);
+  transform:scale(1.15);
+  margin-right:7px;
+}
+
+.hidden{display:none}
+
+.note{
+  font-size:14px;
+  margin:8px 0 12px;
+  padding:10px 12px;
+  line-height:1.7;
+  background:var(--secondary);
+  border-radius:8px;
+  color:#444;
+}
+
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+table{
+  width:100%;
+  min-width:650px;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+
+th,td{
+  border:1px solid var(--border);
+  padding:9px 8px;
+  text-align:center;
+  font-size:14px;
+}
+
+th:first-child,
+td:first-child{
+  text-align:left;
+  width:42%;
+}
+
+th{
+  background:var(--primary);
+  color:white;
+  font-weight:700;
+}
+
+tbody tr:nth-child(even){
+  background:var(--secondary);
+}
+
+tbody tr:hover{
+  background:#fff2f2;
+}
+
+.submit{
+  margin-top:26px;
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:14px;
+  background:var(--primary);
+  color:white;
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 6px 16px rgba(128,0,0,.22);
+}
+
+.submit:hover{
+  background:var(--primary-dark);
+}
+
+.submit:disabled{
+  background:#999999;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+
+#status{
+  text-align:center;
+  margin-top:14px;
+  font-weight:700;
+}
+
+@media(max-width:768px){
+  .page{
+    width:100%;
+    margin:0;
+    border-radius:0;
+    border:none;
+    box-shadow:none;
+  }
+
+  .top-menu{
+    justify-content:center;
+  }
+
+  .menu-btn{
+    flex:1 1 140px;
+    text-align:center;
+  }
+
+  .desc{
+    border-left:4px solid var(--primary);
+  }
+
+  th,td{
+    padding:8px 6px;
+    font-size:13px;
+  }
+}
+
+@media(max-width:480px){
+  .page{
+    padding:14px;
+  }
+
+  .section{
+    padding:14px;
+    border-radius:14px;
+  }
+
+  h1{
+    font-size:20px;
+  }
+
+  .desc{
+    font-size:14px;
+  }
+
+  .options{
+    padding:10px 12px;
+  }
+
+  table{
+    min-width:620px;
+  }
+}
+</style>
 </head>
 
 <body>
-  <p>กำลังเปิดแบบประเมิน...</p>
+<div class="page">
+
+  <div class="top-menu">
+    <a href="index.html" class="menu-btn home-btn">📝 แบบประเมิน</a>
+    <a href="dashboard.html" class="menu-btn dashboard-btn">📊 Dashboard</a>
+  </div>
+
+  <h1>แบบประเมินความพึงพอใจต่อการให้บริการอาหารเวรบ่าย</h1>
+
+  <div class="desc">
+    แบบสอบถามนี้จัดทำขึ้นเพื่อประเมินความพึงพอใจของผู้รับบริการอาหารเวรบ่าย<br>
+    เพื่อนำผลไปใช้ปรับปรุงคุณภาพอาหารและการให้บริการ ข้อมูลจะถูกเก็บเป็นความลับ
+  </div>
+
+  <form id="surveyForm">
+
+    <div class="section">
+      <h2>ตอนที่ 1 ข้อมูลทั่วไปของผู้ตอบ</h2>
+
+      <div class="field">
+        <label>1. หน่วยงาน / แผนก *</label>
+        <select id="department" required onchange="toggleDepartmentOther()">
+          <option value="">-- เลือก --</option>
+          <option>IPD</option>
+          <option>ห้องฉุกเฉิน</option>
+          <option>ศูนย์เปล</option>
+          <option>พยาธิวิทยาคลินิก</option>
+          <option>เวชระเบียนและสถิติ</option>
+          <option>งานการเงินและบัญชี</option>
+          <option>งานซ่อมบำรุง</option>
+          <option>X-RAY</option>
+          <option>เภสัชกรรม</option>
+          <option>เครื่องมือแพทย์</option>
+          <option>จ่ายกลาง</option>
+          <option>ยานพาหนะ EMS</option>
+          <option>ประชาสัมพันธ์</option>
+          <option>อื่น ๆ</option>
+        </select>
+      </div>
+
+      <div class="field hidden" id="departmentOtherBox">
+        <label>ระบุหน่วยงาน / แผนกอื่น ๆ</label>
+        <input id="departmentOther" type="text">
+      </div>
+
+      <div class="field">
+        <label>2. สถานะผู้รับบริการ *</label>
+        <div class="options">
+          <label><input type="radio" name="userStatus" value="พยาบาล" required> พยาบาล</label>
+          <label><input type="radio" name="userStatus" value="แพทย์ Intern"> แพทย์ Intern</label>
+          <label><input type="radio" name="userStatus" value="เจ้าหน้าที่"> เจ้าหน้าที่ (ระบุ)</label>
+        </div>
+      </div>
+
+      <div class="field hidden" id="staffOtherBox">
+        <label>ระบุตำแหน่งเจ้าหน้าที่</label>
+        <input id="staffOther" type="text">
+      </div>
+
+      <div class="field">
+        <label>3. ความถี่ในการรับประทานอาหารเวรบ่าย *</label>
+        <div class="options">
+          <label><input type="radio" name="frequency" value="ทุกวัน" required> ทุกวัน</label>
+          <label><input type="radio" name="frequency" value="สัปดาห์ละ 2–3 ครั้ง"> สัปดาห์ละ 2–3 ครั้ง</label>
+          <label><input type="radio" name="frequency" value="นาน ๆ ครั้ง"> นาน ๆ ครั้ง</label>
+        </div>
+      </div>
+    </div>
+
+    <div id="gridArea"></div>
+
+    <div class="section">
+      <h2>ตอนที่ 9 ความพึงพอใจโดยรวม</h2>
+
+      <div class="field">
+        <label>1. ความพึงพอใจต่อการให้บริการอาหารเวรบ่ายโดยรวม *</label>
+        <div class="options">
+          <label><input type="radio" name="overall" value="พึงพอใจมากที่สุด" required> พึงพอใจมากที่สุด</label>
+          <label><input type="radio" name="overall" value="พึงพอใจมาก"> พึงพอใจมาก</label>
+          <label><input type="radio" name="overall" value="ปานกลาง"> ปานกลาง</label>
+          <label><input type="radio" name="overall" value="พึงพอใจน้อย"> พึงพอใจน้อย</label>
+          <label><input type="radio" name="overall" value="พึงพอใจน้อยที่สุด"> พึงพอใจน้อยที่สุด</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>2. ท่านต้องการใช้บริการอาหารเวรบ่ายต่อไปในอนาคตหรือไม่ *</label>
+        <select id="continueService" required onchange="toggleReason()">
+          <option value="">-- เลือก --</option>
+          <option>ต้องการ</option>
+          <option>ไม่แน่ใจ</option>
+          <option>ไม่ต้องการ</option>
+        </select>
+      </div>
+
+      <div class="field hidden" id="reasonBox">
+        <label>ระบุเหตุผล</label>
+        <textarea id="reason"></textarea>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>ตอนที่ 10 ข้อเสนอแนะ</h2>
+
+      <div class="field">
+        <label>1. เมนูอาหารที่ท่านต้องการให้เพิ่มหรือปรับปรุง</label>
+        <textarea id="menuSuggestion"></textarea>
+      </div>
+
+      <div class="field">
+        <label>2. ข้อเสนอแนะอื่น ๆ เพื่อการปรับปรุงการให้บริการ</label>
+        <textarea id="otherSuggestion"></textarea>
+      </div>
+    </div>
+
+    <button class="submit" id="submitBtn" type="submit">ส่งแบบประเมิน</button>
+    <div id="status"></div>
+
+  </form>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbywKLGz-zrNXsydhiw_TNLIvcknwG6HmFpFx3PBCL588dZir2W1BTtqPhzBjNzy0JDlBg/exec";
+
+function apiPost(payload){
+  return fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }).then(res => res.json());
+}
+
+const sections = [
+  {title:'ตอนที่ 2 ความพึงพอใจด้านคุณภาพอาหาร',questions:[['taste','รสชาติอาหาร'],['tasteSuitable','ความเหมาะสมของรสชาติ'],['fresh','ความสดใหม่ของอาหาร'],['temperature','อุณหภูมิอาหารขณะรับประทาน'],['appearance','ลักษณะอาหารน่ารับประทาน']]},
+  {title:'ตอนที่ 3 ความหลากหลายและความเหมาะสมของเมนู',questions:[['menuVariety','ความหลากหลายของเมนูในแต่ละวัน'],['shiftSuitable','ความเหมาะสมของเมนูกับเวรบ่าย'],['foodTypeSuitable','ความเหมาะสมของประเภทอาหาร (ต้ม/ผัด/แกง/ทอด)'],['menuRepeat','ความซ้ำของเมนูในรอบเดือน']]},
+  {title:'ตอนที่ 4 ปริมาณอาหารและความคุ้มค่า',questions:[['portion','ปริมาณอาหารมีความเหมาะสม'],['fullEnough','ความอิ่มเพียงพอจนจบเวร'],['value','ความคุ้มค่าของอาหารที่ได้รับ']]},
+  {title:'ตอนที่ 5 คุณค่าโภชนาการ',questions:[['fiveGroups','อาหารมีความสมดุลครบ 5 หมู่'],['healthy','ความเหมาะสมต่อสุขภาพ'],['energy','ช่วยให้มีพลังงานในการทำงานเวรบ่าย']]},
+  {title:'ตอนที่ 6 สุขลักษณะและความปลอดภัยอาหาร',questions:[['foodClean','ความสะอาดของอาหาร'],['containerClean','ความสะอาดของภาชนะบรรจุ'],['foodSafety','ความมั่นใจในความปลอดภัยของอาหาร'],['servicePointClean','ความสะอาดของจุดแจกจ่ายอาหาร']]},
+  {title:'ตอนที่ 7 การให้บริการและกระบวนการจัดอาหาร',questions:[['onTime','ความตรงต่อเวลาของการจัดอาหาร'],['organized','ความเป็นระเบียบในการรับอาหาร'],['convenient','ความสะดวกในการรับบริการ'],['problemManagement','การจัดการเมื่อเกิดปัญหา']]},
+  {title:'ตอนที่ 8 บุคลากรผู้ให้บริการ',questions:[['polite','ความสุภาพของเจ้าหน้าที่'],['care','ความเอาใจใส่ผู้รับบริการ'],['adviceReady','ความพร้อมในการให้คำแนะนำ'],['solveProblem','การแก้ไขปัญหาเฉพาะหน้า']]}
+];
+
+function renderGrids(){
+  let html = '';
+  sections.forEach(sec=>{
+    html += `
+      <div class="section">
+        <h2>${sec.title}</h2>
+        <div class="note">ระดับความพึงพอใจ 5 = พึงพอใจมากที่สุด | 4 = พึงพอใจมาก | 3 = ปานกลาง | 2 = พึงพอใจน้อย | 1 = พึงพอใจน้อยที่สุด</div>
+        <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>รายการประเมิน</th>
+              <th>5<br>มากที่สุด</th>
+              <th>4<br>มาก</th>
+              <th>3<br>ปานกลาง</th>
+              <th>2<br>น้อย</th>
+              <th>1<br>น้อยที่สุด</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    sec.questions.forEach(q=>{
+      html += `
+        <tr>
+          <td>${q[1]}</td>
+          ${[5,4,3,2,1].map(n=>`<td><input type="radio" name="${q[0]}" value="${n}" required></td>`).join('')}
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table></div></div>`;
+  });
+
+  document.getElementById('gridArea').innerHTML = html;
+}
+
+renderGrids();
+
+function getRadio(name){
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : '';
+}
+
+function toggleDepartmentOther(){
+  document.getElementById('departmentOtherBox').classList.toggle(
+    'hidden',
+    document.getElementById('department').value !== 'อื่น ๆ'
+  );
+}
+
+document.querySelectorAll('input[name="userStatus"]').forEach(el=>{
+  el.addEventListener('change',()=>{
+    document.getElementById('staffOtherBox').classList.toggle(
+      'hidden',
+      getRadio('userStatus') !== 'เจ้าหน้าที่'
+    );
+  });
+});
+
+function toggleReason(){
+  const v = document.getElementById('continueService').value;
+  document.getElementById('reasonBox').classList.toggle(
+    'hidden',
+    v === '' || v === 'ต้องการ'
+  );
+}
+
+document.getElementById('surveyForm').addEventListener('submit', function(e){
+  e.preventDefault();
+
+  const btn = document.getElementById('submitBtn');
+  const status = document.getElementById('status');
+
+  btn.disabled = true;
+  btn.innerText = 'กำลังบันทึก...';
+  status.innerText = '';
+
+  const data = {
+    lineUserId:'',
+    displayName:'',
+    ipAddress:'',
+    device:navigator.userAgent,
+    department:document.getElementById('department').value,
+    departmentOther:document.getElementById('departmentOther').value,
+    userStatus:getRadio('userStatus'),
+    staffOther:document.getElementById('staffOther').value,
+    frequency:getRadio('frequency'),
+    overall:getRadio('overall'),
+    continueService:document.getElementById('continueService').value,
+    reason:document.getElementById('reason').value,
+    menuSuggestion:document.getElementById('menuSuggestion').value,
+    otherSuggestion:document.getElementById('otherSuggestion').value
+  };
+
+  sections.forEach(sec=>{
+    sec.questions.forEach(q=>{
+      data[q[0]] = getRadio(q[0]);
+    });
+  });
+
+  apiPost({ action: 'saveForm', data: data })
+    .then(res=>{
+      if(res.success){
+        status.style.color = 'green';
+        status.innerText = res.message;
+        alert(res.message);
+        document.getElementById('surveyForm').reset();
+        document.getElementById('departmentOtherBox').classList.add('hidden');
+        document.getElementById('staffOtherBox').classList.add('hidden');
+        document.getElementById('reasonBox').classList.add('hidden');
+      }else{
+        status.style.color = 'red';
+        status.innerText = res.message || 'บันทึกไม่สำเร็จ';
+        alert(res.message || 'บันทึกไม่สำเร็จ');
+      }
+      btn.disabled = false;
+      btn.innerText = 'ส่งแบบประเมิน';
+    })
+    .catch(err=>{
+      status.style.color = 'red';
+      status.innerText = err.message;
+      alert(err.message);
+      btn.disabled = false;
+      btn.innerText = 'ส่งแบบประเมิน';
+    });
+});
+</script>
 </body>
 </html>
