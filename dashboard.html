@@ -164,24 +164,36 @@ body{
 
 .filter-grid{
   display:grid;
-  grid-template-columns:1fr 1fr 300px;
+  grid-template-columns:1fr 1fr 320px;
   gap:12px;
   align-items:start;
+}
+
+.filter-actions-col{
+  min-width:0;
+}
+
+.action-label{
+  display:block;
+  height:22px;
+  margin-bottom:6px;
+  visibility:hidden;
 }
 
 .filter-actions{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:12px;
-  padding-top:31px;
 }
 
 .filter-actions .menu-btn{
+  width:100%;
   height:46px;
   display:flex;
   align-items:center;
   justify-content:center;
   white-space:nowrap;
+  padding:0 12px;
 }
 
 label{
@@ -360,7 +372,10 @@ tbody tr:nth-child(even){
 
   .filter-actions{
     grid-template-columns:1fr;
-    padding-top:0;
+  }
+
+  .action-label{
+    display:none;
   }
 
   .top-menu{
@@ -469,10 +484,13 @@ tbody tr:nth-child(even){
           <div id="endDateText" class="date-preview">ยังไม่ได้เลือกวันที่</div>
         </div>
 
-      <div class="filter-actions">
-        <button onclick="loadDashboard()" class="menu-btn refresh-btn">ค้นหาตามช่วงวันที่</button>
-        <button onclick="clearFilter()" class="menu-btn form-btn">ล้างตัวกรอง</button>
-      </div>
+        <div class="filter-actions-col">
+          <label class="action-label">ปุ่มดำเนินการ</label>
+          <div class="filter-actions">
+            <button onclick="loadDashboard()" class="menu-btn refresh-btn">ค้นหาตามช่วงวันที่</button>
+            <button onclick="clearFilter()" class="menu-btn form-btn">ล้างตัวกรอง</button>
+          </div>
+        </div>
 
       </div>
 
