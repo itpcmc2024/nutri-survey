@@ -418,13 +418,44 @@ tbody tr:hover{
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwXcmq2BCuSVfXA3PYqsgctESG4hsq9qIf-Ba9TgbCVRHcdImVJLmxUBkxtZ2nNI5hhWg/exec";
 
-function apiPost(payload){
-  return fetch(API_URL, {
-    method: 'POST',
-    body: JSON.stringify(payload)
-  }).then(res => res.json());
+const API_URL = 'https://script.google.com/macros/s/AKfycbyVe027mrtGc7FkT7HRlpOfvv7YssCG_ocoZRBVJgs1-ayGb_REc1CbU7ytQbMlz1Kptg/exec';
+
+function apiRequest(action, payload) {
+  return new Promise((resolve, reject) => {
+    const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
+    const script = document.createElement('script');
+
+    window[callbackName] = function(response) {
+      cleanup();
+      resolve(response);
+    };
+
+    function cleanup() {
+      if (script.parentNode) script.parentNode.removeChild(script);
+      delete window[callbackName];
+      clearTimeout(timer);
+    }
+
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error('เชื่อมต่อ API ไม่สำเร็จ กรุณาตรวจสอบ Web App URL / Deploy'));
+    }, 30000);
+
+    const query = new URLSearchParams({
+      action: action,
+      payload: JSON.stringify(payload || {}),
+      callback: callbackName
+    });
+
+    script.onerror = function() {
+      cleanup();
+      reject(new Error('โหลด API ไม่สำเร็จ'));
+    };
+
+    script.src = API_URL + '?' + query.toString();
+    document.body.appendChild(script);
+  });
 }
 
 const sections = [
@@ -538,7 +569,7 @@ document.getElementById('surveyForm').addEventListener('submit', function(e){
     });
   });
 
-  apiPost({ action: 'saveForm', data: data })
+  apiRequest('saveForm', data)
     .then(res=>{
       if(res.success){
         status.style.color = 'green';
