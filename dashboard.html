@@ -1,1 +1,746 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard แบบประเมินอาหารเวรบ่าย</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root{
+  --bg:#FFFFFF;
+  --primary:#800000;
+  --primary-dark:#660000;
+  --secondary:#F5F5F5;
+  --text:#222222;
+  --border:#DDDDDD;
+}
+
+*{box-sizing:border-box;font-family:"Sarabun","Prompt",Arial,sans-serif}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.wrap{
+  width:min(96%, 1220px);
+  margin:auto;
+  padding:clamp(14px,3vw,26px);
+}
+
+.top-menu{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+
+.menu-btn{
+  padding:10px 18px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:700;
+  transition:.2s;
+  border:none;
+  cursor:pointer;
+  font-size:15px;
+}
+
+.form-btn{
+  background:#F5F5F5;
+  color:#222222;
+  border:1px solid #DDDDDD;
+}
+
+.dashboard-btn,
+.refresh-btn{
+  background:#800000;
+  color:#FFFFFF;
+  box-shadow:0 4px 12px rgba(128,0,0,.20);
+}
+
+.csv-btn{
+  background:#7B8FA1;
+  color:#fff;
+  box-shadow:0 4px 12px rgba(123,143,161,.22);
+}
+
+.logout-btn{
+  background:#444444;
+  color:#FFFFFF;
+  box-shadow:0 4px 12px rgba(0,0,0,.16);
+}
+
+.header{
+  background:var(--primary);
+  color:#fff;
+  padding:clamp(18px,3vw,26px);
+  border-radius:18px;
+  margin-bottom:20px;
+  box-shadow:0 6px 16px rgba(128,0,0,.18);
+}
+
+.header h1{
+  margin:0 0 8px;
+  font-size:clamp(22px,3vw,28px);
+}
+
+.header p{
+  margin:0;
+  opacity:.9;
+  line-height:1.6;
+}
+
+.login-card{
+  max-width:430px;
+  margin:38px auto;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:26px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+
+.login-card h2{
+  margin:0 0 16px;
+  color:var(--primary);
+  text-align:center;
+}
+
+.login-card .login-desc{
+  text-align:center;
+  color:#666;
+  line-height:1.6;
+  margin-bottom:18px;
+}
+
+.login-card input[type="text"],
+.login-card input[type="password"]{
+  width:100%;
+  padding:12px 13px;
+  border:1px solid #CCCCCC;
+  border-radius:10px;
+  font-size:16px;
+  outline:none;
+  margin-bottom:14px;
+}
+
+.login-card input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(128,0,0,.12);
+}
+
+.login-btn{
+  width:100%;
+  padding:13px;
+  border:none;
+  border-radius:12px;
+  background:var(--primary);
+  color:#fff;
+  font-size:17px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.login-error{
+  text-align:center;
+  color:#c62828;
+  font-weight:700;
+  margin-top:12px;
+}
+
+.filter-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:clamp(14px,2.5vw,20px);
+  margin-bottom:20px;
+  box-shadow:0 4px 14px rgba(0,0,0,.05);
+}
+
+.filter-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr auto auto;
+  gap:12px;
+  align-items:end;
+}
+
+label{
+  font-weight:700;
+  color:var(--primary);
+  display:block;
+  margin-bottom:6px;
+}
+
+input[type="date"]{
+  width:100%;
+  padding:12px 13px;
+  border:1px solid #CCCCCC;
+  border-radius:10px;
+  font-size:16px;
+  outline:none;
+}
+
+input[type="date"]:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(128,0,0,.12);
+}
+
+.filter-note{
+  margin-top:10px;
+  color:#666;
+  font-size:14px;
+}
+
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:20px;
+}
+
+.kpi{
+  background:#fff;
+  border:1px solid var(--border);
+  border-left:7px solid var(--primary);
+  border-radius:16px;
+  padding:clamp(14px,2vw,20px);
+  box-shadow:0 4px 14px rgba(0,0,0,.05);
+}
+
+.kpi-title{
+  color:#666;
+  font-size:14px;
+}
+
+.kpi-value{
+  font-size:clamp(24px,4vw,34px);
+  font-weight:800;
+  color:var(--primary);
+  margin-top:8px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:clamp(14px,2.5vw,20px);
+  box-shadow:0 4px 14px rgba(0,0,0,.05);
+  min-width:0;
+}
+
+.card h2{
+  margin:0 0 14px;
+  color:var(--primary);
+  font-size:clamp(17px,2.3vw,20px);
+  border-bottom:2px solid var(--primary);
+  padding-bottom:8px;
+}
+
+.chart-box{
+  position:relative;
+  min-height:330px;
+}
+
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+table{
+  width:100%;
+  min-width:520px;
+  border-collapse:collapse;
+}
+
+th,td{
+  border:1px solid var(--border);
+  padding:9px;
+  font-size:14px;
+  text-align:left;
+}
+
+th{
+  background:var(--primary);
+  color:#fff;
+}
+
+tbody tr:nth-child(even){
+  background:var(--secondary);
+}
+
+.full{
+  grid-column:1 / -1;
+}
+
+.loading{
+  text-align:center;
+  padding:40px;
+  color:var(--primary);
+  font-weight:700;
+}
+
+.alert{
+  background:#fff2f2;
+  border:1px solid #d99;
+  border-left:7px solid var(--primary);
+  padding:14px;
+  border-radius:12px;
+  margin-bottom:18px;
+  display:none;
+  line-height:1.7;
+}
+
+.empty{
+  text-align:center;
+  padding:30px;
+  color:#777;
+}
+
+@media(max-width:1024px){
+  .kpi-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .chart-box{
+    min-height:300px;
+  }
+}
+
+@media(max-width:768px){
+  .wrap{
+    width:100%;
+    padding:14px;
+  }
+
+  .top-menu{
+    justify-content:center;
+  }
+
+  .menu-btn{
+    flex:1 1 145px;
+    text-align:center;
+  }
+
+  .filter-grid{
+    grid-template-columns:1fr;
+  }
+
+  .kpi-grid{
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+
+  .chart-box{
+    min-height:280px;
+  }
+}
+
+@media(max-width:480px){
+  .kpi-grid{
+    grid-template-columns:1fr;
+  }
+
+  .header,
+  .filter-card,
+  .card,
+  .kpi,
+  .login-card{
+    border-radius:14px;
+  }
+
+  .chart-box{
+    min-height:260px;
+  }
+
+  th,td{
+    font-size:13px;
+    padding:8px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <div class="top-menu">
+    <a href="index.html" class="menu-btn form-btn">📝 แบบประเมิน</a>
+    <a href="dashboard.html" class="menu-btn dashboard-btn">📊 Dashboard</a>
+    <button id="logoutBtn" onclick="logout()" class="menu-btn logout-btn" style="display:none;">ออกจากระบบ</button>
+  </div>
+
+  <div class="header">
+    <h1>Dashboard แบบประเมินอาหารเวรบ่าย</h1>
+    <p>สำหรับผู้มีสิทธิ์เข้าดูข้อมูลเท่านั้น</p>
+  </div>
+
+  <div id="loginBox" class="login-card">
+    <h2>เข้าสู่ระบบ Dashboard</h2>
+    <div class="login-desc">กรุณาเข้าสู่ระบบก่อนดูข้อมูลแบบประเมิน</div>
+
+    <label>Username</label>
+    <input type="text" id="username" autocomplete="username">
+
+    <label>Password</label>
+    <input type="password" id="password" autocomplete="current-password">
+
+    <button onclick="login()" class="login-btn">เข้าสู่ระบบ</button>
+    <div id="loginError" class="login-error"></div>
+  </div>
+
+  <div id="dashboardBox" style="display:none;">
+
+    <div class="top-menu">
+      <button onclick="loadDashboard()" class="menu-btn refresh-btn">🔄 โหลดข้อมูลใหม่</button>
+      <button onclick="exportCsv()" class="menu-btn csv-btn">⬇️ ส่งออก CSV</button>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-grid">
+        <div>
+          <label>วันที่เริ่มต้น</label>
+          <input type="date" id="startDate">
+        </div>
+
+        <div>
+          <label>วันที่สิ้นสุด</label>
+          <input type="date" id="endDate">
+        </div>
+
+        <button onclick="loadDashboard()" class="menu-btn refresh-btn">ค้นหาตามช่วงวันที่</button>
+        <button onclick="clearFilter()" class="menu-btn form-btn">ล้างตัวกรอง</button>
+      </div>
+
+      <div class="filter-note" id="filterText">ข้อมูลทั้งหมด</div>
+    </div>
+
+    <div id="loading" class="loading">กำลังโหลดข้อมูล...</div>
+
+    <div id="dashboard" style="display:none;">
+
+      <div id="alertBox" class="alert"></div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-title">ผู้ตอบทั้งหมด</div><div class="kpi-value" id="total">0</div></div>
+        <div class="kpi"><div class="kpi-title">คะแนนเฉลี่ยรวม</div><div class="kpi-value" id="avg">0</div></div>
+        <div class="kpi"><div class="kpi-title">พึงพอใจระดับดีขึ้นไป</div><div class="kpi-value" id="highPercent">0%</div></div>
+        <div class="kpi"><div class="kpi-title">ควรติดตาม / ปรับปรุง</div><div class="kpi-value" id="lowPercent">0%</div></div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>คะแนนเฉลี่ยแต่ละหมวด</h2>
+          <div class="chart-box"><canvas id="categoryChart"></canvas></div>
+        </div>
+
+        <div class="card">
+          <h2>ระดับความพึงพอใจ</h2>
+          <div class="chart-box"><canvas id="levelChart"></canvas></div>
+        </div>
+
+        <div class="card full">
+          <h2>คะแนนเฉลี่ยรายหน่วยงาน</h2>
+          <div class="chart-box"><canvas id="departmentChart"></canvas></div>
+        </div>
+
+        <div class="card">
+          <h2>ข้อเสนอแนะที่พบบ่อย</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>คำ / ประเด็น</th><th>จำนวนครั้ง</th></tr></thead>
+              <tbody id="suggestionTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Top 5 หน่วยงานคะแนนสูงสุด</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>หน่วยงาน</th><th>คะแนน</th><th>จำนวน</th></tr></thead>
+              <tbody id="topDepartmentTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card full">
+          <h2>รายการตอบแบบประเมินล่าสุด</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>วันที่</th><th>หน่วยงาน</th><th>คะแนนเฉลี่ย</th><th>ระดับ</th></tr></thead>
+              <tbody id="latestTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbywKLGz-zrNXsydhiw_TNLIvcknwG6HmFpFx3PBCL588dZir2W1BTtqPhzBjNzy0JDlBg/exec";
+
+function apiPost(payload){
+  return fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }).then(res => res.json());
+}
+
+let categoryChart = null;
+let levelChart = null;
+let departmentChart = null;
+let dashboardToken = localStorage.getItem('dashboardToken') || '';
+
+const pastelColors = [
+  '#FFB3BA','#FFDFBA','#FFFFBA','#BAFFC9','#BAE1FF','#D7BAFF',
+  '#BFE6D4','#F7C8E0','#CDE7BE','#C9D6DF','#F6D6AD','#D6EADF'
+];
+
+if (dashboardToken) {
+  showDashboard();
+  loadDashboard();
+}
+
+document.getElementById('password').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') login();
+});
+
+function login(){
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const loginError = document.getElementById('loginError');
+
+  loginError.innerText = 'กำลังตรวจสอบ...';
+
+  apiPost({
+    action: 'loginDashboard',
+    username: username,
+    password: password
+  })
+    .then(function(res){
+      if(res.success){
+        dashboardToken = res.token;
+        localStorage.setItem('dashboardToken', dashboardToken);
+        loginError.innerText = '';
+        showDashboard();
+        loadDashboard();
+      }else{
+        loginError.innerText = res.message || 'เข้าสู่ระบบไม่สำเร็จ';
+      }
+    })
+    .catch(function(err){
+      loginError.innerText = err.message;
+    });
+}
+
+function logout(){
+  localStorage.removeItem('dashboardToken');
+  dashboardToken = '';
+  document.getElementById('dashboardBox').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('loginBox').style.display = 'block';
+  document.getElementById('logoutBtn').style.display = 'none';
+}
+
+function showDashboard(){
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('dashboardBox').style.display = 'block';
+  document.getElementById('logoutBtn').style.display = 'inline-block';
+}
+
+function getFilter(){
+  return {
+    startDate: document.getElementById('startDate').value,
+    endDate: document.getElementById('endDate').value
+  };
+}
+
+function loadDashboard(){
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('loading').innerText = 'กำลังโหลดข้อมูล...';
+  document.getElementById('dashboard').style.display = 'none';
+
+  apiPost({
+    action: 'getDashboardData',
+    filter: getFilter(),
+    token: dashboardToken
+  })
+    .then(function(res){
+      if(res.success === false){
+        throw new Error(res.message || 'โหลด Dashboard ไม่สำเร็จ');
+      }
+      renderDashboard(res);
+    })
+    .catch(function(err){
+      document.getElementById('loading').innerText = 'Error: ' + err.message;
+      if (String(err.message || '').includes('Session') || String(err.message || '').includes('เข้าสู่ระบบ')) {
+        logout();
+      }
+    });
+}
+
+function clearFilter(){
+  document.getElementById('startDate').value = '';
+  document.getElementById('endDate').value = '';
+  loadDashboard();
+}
+
+function renderDashboard(data){
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('filterText').innerText = data.filterText || 'ข้อมูลทั้งหมด';
+
+  document.getElementById('total').innerText = data.total + ' คน';
+  document.getElementById('avg').innerText = data.avg;
+  document.getElementById('highPercent').innerText = data.highPercent + '%';
+  document.getElementById('lowPercent').innerText = data.lowPercent + '%';
+
+  const alertBox = document.getElementById('alertBox');
+  const lowCategories = data.categoryScores.filter(x => x.score > 0 && x.score < 3.51);
+
+  if(lowCategories.length){
+    alertBox.style.display = 'block';
+    alertBox.innerHTML = '⚠️ หมวดที่ควรติดตาม: ' +
+      lowCategories.map(x => `<b>${escapeHtml(x.name)}</b> (${x.score})`).join(', ');
+  }else{
+    alertBox.style.display = 'none';
+  }
+
+  if(categoryChart) categoryChart.destroy();
+  if(levelChart) levelChart.destroy();
+  if(departmentChart) departmentChart.destroy();
+
+  categoryChart = createBarChart('categoryChart', data.categoryScores.map(x => x.name), data.categoryScores.map(x => x.score), 'คะแนนเฉลี่ยแต่ละหมวด');
+  levelChart = createPieChart('levelChart', data.levels.map(x => x.name), data.levels.map(x => x.count));
+  departmentChart = createBarChart('departmentChart', data.departments.map(x => x.name), data.departments.map(x => x.score), 'คะแนนเฉลี่ยรายหน่วยงาน');
+
+  fillSuggestionTable(data.suggestions);
+  fillDepartmentTable(data.departments.slice(0,5));
+  fillLatestTable(data.latest);
+}
+
+function createBarChart(id, labels, values, label){
+  return new Chart(document.getElementById(id), {
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[{
+        label:label,
+        data:values,
+        backgroundColor: labels.map((_, i) => pastelColors[i % pastelColors.length]),
+        borderColor:'#FFFFFF',
+        borderWidth:2,
+        borderRadius:8
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      scales:{
+        y:{beginAtZero:true,max:5,grid:{color:'#EEEEEE'}},
+        x:{grid:{display:false},ticks:{autoSkip:false,maxRotation:45,minRotation:0}}
+      },
+      plugins:{legend:{display:false}}
+    }
+  });
+}
+
+function createPieChart(id, labels, values){
+  return new Chart(document.getElementById(id), {
+    type:'doughnut',
+    data:{
+      labels:labels,
+      datasets:[{
+        data:values,
+        backgroundColor: labels.map((_, i) => pastelColors[i % pastelColors.length]),
+        borderColor:'#FFFFFF',
+        borderWidth:3
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom'}}
+    }
+  });
+}
+
+function exportCsv(){
+  apiPost({
+    action: 'exportDashboardCsv',
+    filter: getFilter(),
+    token: dashboardToken
+  })
+    .then(function(res){
+      if(res.success === false){
+        throw new Error(res.message || 'ส่งออก CSV ไม่สำเร็จ');
+      }
+
+      const blob = new Blob([res.csv], { type:'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = res.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    })
+    .catch(function(err){
+      alert('Export Error: ' + err.message);
+      if (String(err.message || '').includes('Session') || String(err.message || '').includes('เข้าสู่ระบบ')) {
+        logout();
+      }
+    });
+}
+
+function fillSuggestionTable(items){
+  const tbody = document.getElementById('suggestionTable');
+  tbody.innerHTML = items.length
+    ? items.map(x => `<tr><td>${escapeHtml(x.word)}</td><td>${x.count}</td></tr>`).join('')
+    : `<tr><td colspan="2" class="empty">ยังไม่มีข้อมูล</td></tr>`;
+}
+
+function fillDepartmentTable(items){
+  const tbody = document.getElementById('topDepartmentTable');
+  tbody.innerHTML = items.length
+    ? items.map(x => `<tr><td>${escapeHtml(x.name)}</td><td>${x.score}</td><td>${x.count}</td></tr>`).join('')
+    : `<tr><td colspan="3" class="empty">ยังไม่มีข้อมูล</td></tr>`;
+}
+
+function fillLatestTable(items){
+  const tbody = document.getElementById('latestTable');
+  tbody.innerHTML = items.length
+    ? items.map(x => `<tr><td>${escapeHtml(x.date)}</td><td>${escapeHtml(x.department)}</td><td>${escapeHtml(x.avg)}</td><td>${escapeHtml(x.level)}</td></tr>`).join('')
+    : `<tr><td colspan="4" class="empty">ยังไม่มีข้อมูล</td></tr>`;
+}
+
+function escapeHtml(text){
+  return String(text || '')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#039;");
+}
+</script>
+</body>
+</html>
