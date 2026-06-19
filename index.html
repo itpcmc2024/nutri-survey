@@ -292,6 +292,76 @@ tbody tr:hover{
     min-width:620px;
   }
 }
+
+
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:20px;
+}
+
+.modal-box{
+  width:min(92%,420px);
+  background:#FFFFFF;
+  border-radius:20px;
+  padding:28px 24px;
+  text-align:center;
+  box-shadow:0 12px 32px rgba(0,0,0,.25);
+  border-top:8px solid #800000;
+  animation:modalPop .18s ease-out;
+}
+
+@keyframes modalPop{
+  from{transform:scale(.92);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+
+.modal-icon{
+  width:58px;
+  height:58px;
+  margin:0 auto 12px;
+  border-radius:50%;
+  background:#e8f7ee;
+  color:#1b8f45;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  font-weight:800;
+}
+
+.modal-box h2{
+  color:#800000;
+  margin:0 0 8px;
+  font-size:24px;
+}
+
+.modal-box p{
+  margin:0 0 20px;
+  color:#333;
+  font-size:17px;
+}
+
+.modal-box button{
+  background:#800000;
+  color:white;
+  border:none;
+  border-radius:12px;
+  padding:12px 34px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.modal-box button:hover{
+  background:#660000;
+}
+
 </style>
 </head>
 
@@ -516,6 +586,15 @@ function renderGrids(){
 
 renderGrids();
 
+
+function showSuccessModal(){
+  document.getElementById('successModal').style.display = 'flex';
+}
+
+function closeSuccessModal(){
+  document.getElementById('successModal').style.display = 'none';
+}
+
 function getRadio(name){
   const el = document.querySelector(`input[name="${name}"]:checked`);
   return el ? el.value : '';
@@ -583,7 +662,7 @@ document.getElementById('surveyForm').addEventListener('submit', function(e){
       if(res.success){
         status.style.color = 'green';
         status.innerText = res.message;
-        alert(res.message);
+        showSuccessModal();
         document.getElementById('surveyForm').reset();
         document.getElementById('departmentOtherBox').classList.add('hidden');
         document.getElementById('staffOtherBox').classList.add('hidden');
