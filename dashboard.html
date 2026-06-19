@@ -164,9 +164,15 @@ body{
 
 .filter-grid{
   display:grid;
-  grid-template-columns:1fr 1fr auto auto;
+  grid-template-columns:1fr 1fr 1fr;
   gap:12px;
   align-items:end;
+}
+
+.filter-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
 }
 
 label{
@@ -337,6 +343,10 @@ tbody tr:nth-child(even){
   .wrap{
     width:100%;
     padding:14px;
+  
+  .filter-actions{
+    grid-template-columns:1fr;
+    }
   }
 
   .top-menu{
@@ -445,8 +455,11 @@ tbody tr:nth-child(even){
           <div id="endDateText" class="date-preview">ยังไม่ได้เลือกวันที่</div>
         </div>
 
+      <div class="filter-actions">
         <button onclick="loadDashboard()" class="menu-btn refresh-btn">ค้นหาตามช่วงวันที่</button>
         <button onclick="clearFilter()" class="menu-btn form-btn">ล้างตัวกรอง</button>
+      </div>
+
       </div>
 
       <div class="filter-note" id="filterText">ข้อมูลทั้งหมด</div>
