@@ -196,6 +196,17 @@ input[type="date"]:focus{
   font-size:14px;
 }
 
+.date-preview{
+  margin-top:6px;
+  color:#666666;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.date-preview strong{
+  color:var(--primary);
+}
+
 .kpi-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -424,12 +435,14 @@ tbody tr:nth-child(even){
       <div class="filter-grid">
         <div>
           <label>วันที่เริ่มต้น</label>
-          <input type="date" id="startDate">
+          <input type="date" id="startDate" onchange="updateDatePreview()">
+          <div id="startDateText" class="date-preview">ยังไม่ได้เลือกวันที่</div>
         </div>
 
         <div>
           <label>วันที่สิ้นสุด</label>
-          <input type="date" id="endDate">
+          <input type="date" id="endDate" onchange="updateDatePreview()">
+          <div id="endDateText" class="date-preview">ยังไม่ได้เลือกวันที่</div>
         </div>
 
         <button onclick="loadDashboard()" class="menu-btn refresh-btn">ค้นหาตามช่วงวันที่</button>
@@ -554,6 +567,8 @@ const pastelColors = [
   '#BFE6D4','#F7C8E0','#CDE7BE','#C9D6DF','#F6D6AD','#D6EADF'
 ];
 
+updateDatePreview();
+
 if (dashboardToken) {
   showDashboard();
   loadDashboard();
@@ -643,13 +658,14 @@ function loadDashboard(){
 function clearFilter(){
   document.getElementById('startDate').value = '';
   document.getElementById('endDate').value = '';
+  updateDatePreview();
   loadDashboard();
 }
 
 function renderDashboard(data){
   document.getElementById('loading').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
-  document.getElementById('filterText').innerText = data.filterText || 'ข้อมูลทั้งหมด';
+  updateDatePreview();
 
   document.getElementById('total').innerText = data.total + ' คน';
   document.getElementById('avg').innerText = data.avg;
@@ -770,6 +786,47 @@ function fillLatestTable(items){
   tbody.innerHTML = items.length
     ? items.map(x => `<tr><td>${escapeHtml(x.date)}</td><td>${escapeHtml(x.department)}</td><td>${escapeHtml(x.avg)}</td><td>${escapeHtml(x.level)}</td></tr>`).join('')
     : `<tr><td colspan="4" class="empty">ยังไม่มีข้อมูล</td></tr>`;
+}
+
+
+function formatThaiDate(dateStr){
+  if(!dateStr) return '';
+
+  const parts = String(dateStr).split('-');
+  if(parts.length !== 3) return dateStr;
+
+  const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+  if(isNaN(d.getTime())) return dateStr;
+
+  return d.toLocaleDateString('th-TH',{
+    day:'2-digit',
+    month:'long',
+    year:'numeric'
+  });
+}
+
+function updateDatePreview(){
+  const start = document.getElementById('startDate').value;
+  const end = document.getElementById('endDate').value;
+
+  document.getElementById('startDateText').innerHTML = start
+    ? '<strong>' + formatThaiDate(start) + '</strong>'
+    : 'ยังไม่ได้เลือกวันที่';
+
+  document.getElementById('endDateText').innerHTML = end
+    ? '<strong>' + formatThaiDate(end) + '</strong>'
+    : 'ยังไม่ได้เลือกวันที่';
+
+  let text = 'ข้อมูลทั้งหมด';
+  if(start && end){
+    text = 'ช่วงวันที่ ' + formatThaiDate(start) + ' ถึง ' + formatThaiDate(end);
+  }else if(start){
+    text = 'ตั้งแต่วันที่ ' + formatThaiDate(start);
+  }else if(end){
+    text = 'ถึงวันที่ ' + formatThaiDate(end);
+  }
+
+  document.getElementById('filterText').innerText = text;
 }
 
 function escapeHtml(text){
