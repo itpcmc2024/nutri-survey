@@ -373,6 +373,14 @@ tbody tr:nth-child(even){
     padding:8px;
   }
 }
+  .login-user{
+    padding:10px 16px;
+    border-radius:10px;
+    background:#F5F5F5;
+    border:1px solid #DDDDDD;
+    color:#800000;
+    font-weight:700;
+  }
 </style>
 </head>
 
@@ -380,6 +388,7 @@ tbody tr:nth-child(even){
 <div class="wrap">
 
   <div class="top-menu">
+    <span id="loginUserText" class="login-user" style="display:none;"></span>
     <a href="index.html" class="menu-btn form-btn">📝 แบบประเมิน</a>
     <a href="dashboard.html" class="menu-btn dashboard-btn">📊 Dashboard</a>
     <button id="logoutBtn" onclick="logout()" class="menu-btn logout-btn" style="display:none;">ออกจากระบบ</button>
@@ -566,6 +575,7 @@ function login(){
       if(res.success){
         dashboardToken = res.token;
         localStorage.setItem('dashboardToken', dashboardToken);
+        localStorage.setItem('dashboardUser', res.username || username);
         loginError.innerText = '';
         showDashboard();
         loadDashboard();
@@ -581,6 +591,8 @@ function login(){
 function logout(){
   localStorage.removeItem('dashboardToken');
   dashboardToken = '';
+  localStorage.removeItem('dashboardUser');
+  document.getElementById('loginUserText').style.display = 'none';
   document.getElementById('dashboardBox').style.display = 'none';
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('loginBox').style.display = 'block';
@@ -588,9 +600,17 @@ function logout(){
 }
 
 function showDashboard(){
+  const user = localStorage.getItem('dashboardUser') || '';
+
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('dashboardBox').style.display = 'block';
   document.getElementById('logoutBtn').style.display = 'inline-block';
+
+  const userText = document.getElementById('loginUserText');
+  if(user){
+    userText.innerText = 'ผู้ใช้งาน : ' + user;
+    userText.style.display = 'inline-block';
+  }
 }
 
 function getFilter(){
